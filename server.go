@@ -6,9 +6,9 @@ import (
 	"net/http"
 )
 
-const(
+const (
 	cert = "/docker/mainStack/letsencrypt_certs/live/chat.kernelpanics.it/fullchain.pem"
-	key = "/docker/mainStack/letsencrypt_certs/live/chat.kernelpanics.it/privkey.pem"
+	key  = "/docker/mainStack/letsencrypt_certs/live/chat.kernelpanics.it/privkey.pem"
 )
 
 var upgrader = websocket.Upgrader{
@@ -58,7 +58,6 @@ func handleWebSockets(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-
 	clients[username] = client
 	client.WriteJSON(map[string]string{"success": "connection succeeded"})
 	client.WriteJSON(map[string][]string{"clients": getListOfClients()})
@@ -106,9 +105,12 @@ func sendMessage(client *websocket.Conn, msg interface{}, recipient string) {
 
 func main() {
 	http.HandleFunc("/chat", handleWebSockets)
+	http.HandleFunc("/updateInfo", handleUpdateInfo)
+	http.HandleFunc("/download", handleDownload)
 	go handleBroadcast()
 
-	err := http.ListenAndServeTLS("chat.kernelpanics.it:4043", cert, key, nil)
+	//err := http.ListenAndServeTLS("chat.kernelpanics.it:4043", cert, key, nil)
+	err := http.ListenAndServe(":8080", nil)
 	if err != nil {
 		log.Fatal(err)
 	}
