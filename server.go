@@ -35,7 +35,7 @@ func routeMessageToUser(client *websocket.Conn, username string) {
 		err := client.ReadJSON(&msg)
 		if err != nil {
 			delete(clients, username)
-			log.Printf("client ws error: %v", err)
+			log.Printf("client deleted, info: %v\n", err)
 			return
 		}
 
