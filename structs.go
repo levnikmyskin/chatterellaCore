@@ -1,7 +1,14 @@
 package main
-import(
+
+import (
 	"github.com/gorilla/websocket"
 )
+
+type WebsocketHandler interface {
+	ReadJSON(interface{}) error
+	WriteJSON(interface{}) error
+	Close() error
+}
 
 type Message struct {
 	Sender    string `json:"sender"`
@@ -10,18 +17,18 @@ type Message struct {
 }
 
 type Client struct {
-    conn *websocket.Conn
-    Username string `json:"username"`
+	conn     *websocket.Conn
+	Username string `json:"username"`
 }
 
-func (c *Client) WriteJSON (msg interface{}) error {
-    return c.conn.WriteJSON(msg)
+func (c *Client) WriteJSON(msg interface{}) error {
+	return c.conn.WriteJSON(msg)
 }
 
-func (c *Client) ReadJSON (msg interface{}) error {
-    return c.conn.ReadJSON(msg)
+func (c *Client) ReadJSON(msg interface{}) error {
+	return c.conn.ReadJSON(msg)
 }
 
-func (c *Client) Close () error {
-    return c.conn.Close()
+func (c *Client) Close() error {
+	return c.conn.Close()
 }

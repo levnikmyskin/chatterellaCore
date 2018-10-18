@@ -19,7 +19,6 @@ var upgrader = websocket.Upgrader{
 var clients = make(map[string]*Client)
 var broadcast = make(chan string)
 
-
 func routeMessageToUser(client *Client) {
 	for {
 		var msg Message
@@ -41,7 +40,7 @@ func handleWebSockets(w http.ResponseWriter, r *http.Request) {
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Println(err)
-        return
+		return
 	}
 
 	if _, ok := clients[username]; ok {
@@ -49,8 +48,8 @@ func handleWebSockets(w http.ResponseWriter, r *http.Request) {
 		conn.Close()
 		return
 	}
-    
-    client := &Client{conn, username}
+
+	client := &Client{conn, username}
 	clients[username] = client
 	conn.WriteJSON(map[string]string{"success": "connection succeeded"})
 	conn.WriteJSON(map[string][]string{"clients": getListOfClients()})
@@ -81,18 +80,18 @@ func handleMessage(msg *Message) {
 
 func handleBroadcast() {
 	for newClient := range broadcast {
-        m := map[string]string {"client":newClient} 
-        for username, conn := range clients {
+		m := map[string]string{"client": newClient}
+		for username, conn := range clients {
 			sendMessage(conn, m, username)
 		}
 	}
 }
 
-func sendMessage(conn *websocket.Conn, msg interface{}, recipient string) {
-	err := conn.WriteJSON(msg)
+func sendMessage(wsHandler WebsocketHandler, msg interface{}, recipient string) {
+	err := wsHandler.WriteJSON(msg)
 	if err != nil {
 		log.Printf("error writing to client: %v\n", err)
-		conn.Close()
+		wsHandler.Close()
 		delete(clients, recipient)
 	}
 }
@@ -103,7 +102,7 @@ func main() {
 	http.HandleFunc("/download", handleDownload)
 	go handleBroadcast()
 
-    err := http.ListenAndServe(":8080", nil)
+	err := http.ListenAndServeTLS("chat.kernelpanics.it:4043", cert, key, nil)
 	if err != nil {
 		log.Fatal(err)
 	}

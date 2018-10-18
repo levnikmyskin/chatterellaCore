@@ -35,7 +35,7 @@ func handleDownload(w http.ResponseWriter, r *http.Request) {
 	log.Println("Download requested")
 	platform, ok := r.URL.Query()["platform"]
 	if !ok || (platform[0] != "desktop" && platform[0] != "android") {
-	    w.Header().Set("Content-Type", "application/json")
+		w.Header().Set("Content-Type", "application/json")
 		replyBadRequest(w, []byte(`{"error": "your request was not understood"}`))
 		return
 	}
