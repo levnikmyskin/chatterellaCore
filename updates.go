@@ -9,7 +9,7 @@ import (
 
 const (
 	appName = "chatterella"
-	version = "0.0.1"
+	version = "0.0.2"
 )
 
 // Handles when a client requests info on the last
