@@ -8,8 +8,8 @@ import (
 )
 
 const (
-	appName = "chatterella"
-	version = "0.0.2"
+	appName = "lellaChatterella"
+	version = "0.0.3.1"
 )
 
 // Handles when a client requests info on the last
